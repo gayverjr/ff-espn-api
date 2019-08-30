@@ -20,6 +20,10 @@ With pip:
 pip install ff_espn_api
 ```
 
+## For Members of THE LEAGUE or Z League
+I have added a file called `trophies.py` in the `ff-espn-api` which contains the code I used to figure out some of the trophy winners.
+To see it in action, try running example.py in `examples`.
+
 ## Usage
 This will show you how to use `ff-espn-api` with private or public leagues
 

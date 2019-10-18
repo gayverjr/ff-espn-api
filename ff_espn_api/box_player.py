@@ -1,6 +1,7 @@
 from .constant import POSITION_MAP, PRO_TEAM_MAP
 from .player import Player
 from datetime import datetime, timedelta
+from .utils import json_parsing
 
 class BoxPlayer(Player):
     '''player with extra data from a matchup'''
@@ -12,7 +13,6 @@ class BoxPlayer(Player):
         self.pro_opponent = "None" # professional team playing against
         self.pro_pos_rank = 0 # rank of professional team against player position
         self.game_played = 100 # 0-100 for percent of game played
-
         if 'lineupSlotId' in data:
             self.slot_position = POSITION_MAP[data['lineupSlotId']]
 

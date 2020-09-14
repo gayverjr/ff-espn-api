@@ -1,16 +1,16 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='ff_espn_api',
-    packages=['ff_espn_api'],
-    version='1.1.8',
+    name='espn_api',
+    packages=find_packages(),
+    version='0.5.1',
     author='Christian Wendt',
-    description='Fantasy Football ESPN API',
+    description='ESPN API',
     install_requires=['requests>=2.0.0,<3.0.0'],
     setup_requires=['nose>=1.0'],
     test_suite='nose.collector',
     tests_require=['nose', 'requests_mock', 'coverage'],
-    url='https://github.com/cwendt94/ff-espn-api',
+    url='https://github.com/cwendt94/espn-api',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',

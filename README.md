@@ -2,58 +2,30 @@
 ![](https://github.com/cwendt94/espn-api/workflows/Espn%20API%20Integration%20Test/badge.svg) [![codecov](https://codecov.io/gh/cwendt94/espn-api/branch/master/graphs/badge.svg)](https://codecov.io/gh/cwendt94/espn-api) [![Join the chat at https://gitter.im/ff-espn-api/community](https://badges.gitter.im/ff-espn-api/community.svg)](https://gitter.im/ff-espn-api/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![PyPI version](https://badge.fury.io/py/espn-api.svg)](https://badge.fury.io/py/espn-api)
 
 ## ESPN API
-## [NOTICE] Currently username and password are not working, ESPN recently changed their authentication. You can still access your private league using SWID and ESPN_S2.
-This package uses ESPN's Fantasy API to extract data from any public or private league for **Fantasy Football and Basketball**.  
-Please feel free to make suggestions, bug reports, and pull request for features or fixes!
+See the upstream repository https://github.com/cwendt94/espn-api for usage instructions on the API.
 
-This package was inspired and based off of [rbarton65/espnff](https://github.com/rbarton65/espnff).
-
-## Installing
-With Git:
+## Sugested install method:
+Clone the repo and pip install in editable mode.
 ```
-git clone https://github.com/cwendt94/espn-api
-cd espn-api
-python3 setup.py install
-```
-With pip:
-```
-pip install espn_api
+git clone https://github.com/gayverjr/ff-espn-api
+cd ff-espn-api
+pip install -e .
 ```
 
-## For Members of THE LEAGUE or Z League
-I have added a file called `trophies.py` in the `ff-espn-api` which contains the code I used to figure out some of the trophy winners.
-To see it in action, try running example.py in `examples`.
+    
 
-## Usage
-```python
-# Football API
-from espn_api.football import League
-# Basketball API
-from espn_api.basketball import League
-# Init
-league = League(league_id=222, year=2019)
-```
-[For more usage and API details head over to the Wiki!](https://github.com/cwendt94/espn-api/wiki)
+## Things relevant to our leagues
+### Scripts for analysis
+The recap_scripts folder contains relevant scripts for stats. All scripts need to be edited each time to update the week.
+- recap.py: runs the analysis of trophies, 
+- power_rankings.py: runs the analysis of power rankings. 
+- game_report.py: used to take a closer look at each game individually
+- team_reports.py used for the mid-season big stats collection
 
-### Run Tests
-```
-python3 setup.py nosetests
-```
+### Developed analysis submodules
+I have written some routines and added them to my custom version of the package. This is why editable install is nice, we can 
+edit these as we like without having to reinstall each time. These files are located in espn_api/football
 
-## Issue Reporting
-If you find a bug follow the steps below for reporting.
-
-1. Open a [new issue](https://github.com/cwendt94/espn-api/issues) with a brief description of the bug for the title. In the title also add which sport (Football or Basketball)
-
-2. Run the application in debug mode to view ESPN API request's and response's
-    ```python
-    # ... import statement above
-    league = League(league_id=1245, year=2019, debug=True)
-    ```
-    The application will print all requests and the response from ESPN's API in the console. I would suggest piping the console output to a text file as it will be a lot of data.
-
-3. Find the last log before the crash and copy it in the issue descrption with the line number of the crash or possible bug.
-
-4. Submit the new issue!
-
-I will try to comment on the issue as soon as possible with my thoughts and possible fix!
+- trophies.py
+- power_rankings.py
+- team_report.py

@@ -1,6 +1,20 @@
 import numpy as np
 from .trophies import *
 
+def get_activity(league,team):
+    trades=0
+    add_drops=1
+    activity=league.recent_activity(200)
+    for act in activity:
+        for action in act.actions:
+            if team in action:
+                if "TRADED" in action:
+                    trades+=1
+                else:
+                    add_drops+=1
+                break
+    return(trades,add_drops)
+
 def get_team_lineup(team,box_scores):
     for matchup in box_scores:
         if matchup.home_team == team:
@@ -54,16 +68,6 @@ def team_bw(team,week,league):
     players_and_scores = sorted(players_and_scores, key=lambda x: x[1],reverse=True )
     return players_and_scores
 
-'''
-def position_report(team,week,league,pos):
-    analyses = []
-    for this_team in league.teams:
-        analyses.append(position_analysis(this_team,week,league,pos))
-    my_analysis = position_analysis(team,week,league,pos)
-    analyses = sorted(analyses,key=lambda x: x[1],reverse=True)
-    idx = analyses.index(my_analysis)
-    return (my_analysis[1],my_analysis[2],my_analysis[3],idx+1)
-'''
 
 def position_rank(team,league,pos):
     l1=league.teams
@@ -74,43 +78,25 @@ def position_rank(team,league,pos):
 def position_analysis(team,week,league,pos):
     pos_points = 0
     bench_points = 0
+    num_started=0
+    bench_players = 0
     for i in range(1,week+1):
         box_scores = league.box_scores(i)
         lineup = get_team_lineup(team,box_scores)
         for player in lineup:
             if player.slot_position == pos:
                 pos_points += player.points
+                num_started+=1
             elif player.slot_position=="RB/WR/TE" and pos in player.eligibleSlots:
                 pos_points += player.points
+                num_started+=1
             elif pos in player.eligibleSlots:
-                bench_points += player.points
-    team.reports[pos]=(pos_points,bench_points)
-    #team_points = np.sum(team.scores[:week])
-    '''
-    if pos=="RB":
-        team.rb_points=pos_points
-        team.rb_bench=bench_points
-    elif pos=="WR":
-        team.wr_points=pos_points
-        team.wr_bench=bench_points
-    elif pos=="QB":
-        team.qb_points=pos_points
-        team.qb_bench=bench_points
-    elif pos=="TE":
-        team.te_points=pos_points
-        team.te_bench=bench_points
-    elif pos=="K":
-        team.k_points=pos_points
-        team.k_bench=bench_points
-    else:
-        if team.d_points:
-            team.d_points+=pos_points
-            team.d_bench+=bench_points
-        else:
-            team.d_points=pos_points
-            team.d_bench=bench_points
-#return (team,pos_points,bench_points,pos_points/team_points*100)
-'''
+                if player.pro_opponent!=None:
+                    bench_points += player.points
+                    bench_players+=1
+    if bench_players==0:
+        bench_players=1
+    team.reports[pos]=(pos_points/num_started,pos_points,bench_points/bench_players)
 
 def coach_rating(team,week,league,Z=False):
     points_lost = 0

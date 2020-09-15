@@ -14,7 +14,12 @@ Z_LEAGUE_espn_s2 = "AEBrtMduGrOeFF0Yai%2Bh2gIu9%2FTDbj9xCuxORMm6IrSe%2FBjFvTaWjg
 
 """
 
-def get_MVP(box_scores):
+def get_best_and_worst(league,week):
+    teams=sorted(league.teams,key=lambda x: x.scores[week-1])
+    return (teams[0],teams[0].scores[week-1],teams[-1],teams[-1].scores[week-1])
+
+
+def get_MVP(box_scores,league):
     '''Non-bench player w/ most points scored that week
     '''
     all_players = []
@@ -22,11 +27,52 @@ def get_MVP(box_scores):
         all_players += box_score.home_lineup
         all_players += box_score.away_lineup
     all_players = sorted(all_players,key=lambda x: x.points, reverse=True)
+    MVP=[]
     for player in all_players:
         if player.slot_position != "BE":
-            return player,player.points
+            MVP=player
+            break
+    for team in league.teams:
+        if team.get_player_name(MVP.playerId):
+            return MVP.name,MVP.points,team.team_name
 
-def get_LVP(box_scores):
+
+def get_DPOTW(box_scores,league):
+    '''Defensive player w/ most points scored that week
+        '''
+    all_players = []
+    for box_score in box_scores:
+        all_players += box_score.home_lineup
+        all_players += box_score.away_lineup
+    all_players = sorted(all_players,key=lambda x: x.points, reverse=True)
+    MVP=[]
+    for player in all_players:
+        if player.slot_position in ["DT","DE","LB","CB","S"]:
+            MVP=player
+            break
+    for team in league.teams:
+        if team.get_player_name(MVP.playerId):
+            return MVP.name,MVP.points,team.team_name
+
+def get_top_defense(box_scores,league):
+    teams_and_scores = []
+    for box_score in box_scores:
+        home_score=0
+        away_score=0
+        for player in box_score.home_lineup:
+            if player.slot_position in ["DT","DE","LB","CB","S"]:
+                home_score+=player.points
+        for player in box_score.away_lineup:
+                if player.slot_position in ["DT","DE","LB","CB","S"]:
+                    away_score+=player.points
+        teams_and_scores.append((box_score.home_team,home_score))
+        teams_and_scores.append((box_score.away_team,away_score))
+    teams_and_scores = sorted(teams_and_scores,key=lambda x: x[1], reverse=True)
+    return teams_and_scores[0]
+
+
+
+def get_LVP(box_scores,league):
     '''Non-bench player w/ fewest points relative to projection
     '''
     all_players = []
@@ -34,11 +80,15 @@ def get_LVP(box_scores):
         all_players += box_score.home_lineup
         all_players += box_score.away_lineup
     all_players = sorted(all_players,key=lambda x: x.points-x.projected_points, reverse=False)
-    worst_players = []
+    worst_player=[]
     for player in all_players:
         if player.slot_position != "BE":
-            worst_players.append((player,player.points-player.projected_points))
-    return worst_players
+            worst_player=player
+            break
+    for team in league.teams:
+        if team.get_player_name(worst_player.playerId):
+            return worst_player.name,worst_player.points-worst_player.projected_points,team.team_name
+    return worst_player
 
 def get_bwotw(box_scores,league):
     '''Most points for bench player (benchwarmer of the week)
@@ -164,23 +214,110 @@ def get_hue_jackson(box_scores,league,Zleague=False):
     return teams_and_differentials[:2]
 
 def get_projected_score(lineup):
-    '''Projected score of given lineup
-    '''
-    proj_score = 0
-    for player in lineup:
-        if player.slot_position != "BE":
-            proj_score += player.projected_points
-    return proj_score
+    ''' Optimal score for a given lineup
+        '''
+    QBs=[]
+    RBs=[]
+    TE=[]
+    Flex = []
+    WRs = []
+    D_ST = []
+    K = []
+    optimal_points = 0
+    #sort by projected points instead of actual points
+    sorted_lineup = sorted(lineup,key=lambda x: x.projected_points, reverse=True)
+    for player in sorted_lineup:
+        if "QB" in player.eligibleSlots and len(QBs)==0:
+            QBs.append(player)
+            optimal_points+=player.points
+        elif "RB" in player.eligibleSlots and len(RBs)<2:
+            RBs.append(player)
+            optimal_points+=player.points
+        elif "WR" in player.eligibleSlots and len(WRs)<2:
+            WRs.append(player)
+            optimal_points+=player.points
+        elif "TE" in player.eligibleSlots and len(TE)==0:
+            TE.append(player)
+            optimal_points+=player.points
+        elif "RB/WR/TE" in player.eligibleSlots and len(Flex)==0:
+            Flex.append(player)
+            optimal_points+=player.points
+        elif "D/ST" in player.eligibleSlots and len(D_ST)==0:
+            D_ST.append(player)
+            optimal_points+=player.points
+        elif "K" in player.eligibleSlots and len(K)==0:
+            K.append(player)
+            optimal_points+=player.points
+    return optimal_points
 
-def get_sith_lord(box_scores,league):
+def get_projected_score_Z(lineup):
+    ''' Optimal score for a given lineup
+        '''
+    QBs=[]
+    RBs=[]
+    TE=[]
+    Flex = []
+    WRs = []
+    DT = []
+    DE = []
+    LB = []
+    CB = []
+    S = []
+    K = []
+    optimal_points = 0
+    #sort by projected points instead of actual points
+    sorted_lineup = sorted(lineup,key=lambda x: x.projected_points, reverse=True)
+    for player in sorted_lineup:
+        if "QB" in player.eligibleSlots and len(QBs)<2:
+            QBs.append(player)
+            optimal_points+=player.points
+        elif "RB" in player.eligibleSlots and len(RBs)<2:
+            RBs.append(player)
+            optimal_points+=player.points
+        elif "WR" in player.eligibleSlots and len(WRs)<2:
+            WRs.append(player)
+            optimal_points+=player.points
+        elif "TE" in player.eligibleSlots and len(TE)==0:
+            TE.append(player)
+            optimal_points+=player.points
+        elif "RB/WR/TE" in player.eligibleSlots and len(Flex)==0:
+            Flex.append(player)
+            optimal_points+=player.points
+        elif "DT" in player.eligibleSlots and len(DT)==0:
+            DT.append(player)
+            optimal_points+=player.points
+        elif "DE" in player.eligibleSlots and len(DE)==0:
+            DE.append(player)
+            optimal_points+=player.points
+        elif "LB" in player.eligibleSlots and len(LB)==0:
+            LB.append(player)
+            optimal_points+=player.points
+        elif "CB" in player.eligibleSlots and len(CB)==0:
+            CB.append(player)
+            optimal_points+=player.points
+        elif "S" in player.eligibleSlots and len(S)==0:
+            S.append(player)
+            optimal_points+=player.points
+        elif "K" in player.eligibleSlots and len(K)==0:
+            K.append(player)
+            optimal_points+=player.points
+    return optimal_points
+
+def get_sith_lord(box_scores,league,Zleague=False):
     ''' Most team points relative to projection
     '''
     teams_and_differentials = []
     for box_score in box_scores:
-        proj_home = get_projected_score(box_score.home_lineup)
-        teams_and_differentials.append((box_score.home_team,box_score.home_score-proj_home))
-        proj_away = get_projected_score(box_score.away_lineup)
-        teams_and_differentials.append((box_score.away_team,box_score.away_score-proj_away))
+        if not Zleague:
+            proj_home = get_projected_score(box_score.home_lineup)
+            teams_and_differentials.append((box_score.home_team,box_score.home_score-proj_home))
+            proj_away = get_projected_score(box_score.away_lineup)
+            teams_and_differentials.append((box_score.away_team,box_score.away_score-proj_away))
+        else:
+            proj_home = get_projected_score_Z(box_score.home_lineup)
+            teams_and_differentials.append((box_score.home_team,box_score.home_score-proj_home))
+            proj_away = get_projected_score_Z(box_score.away_lineup)
+            teams_and_differentials.append((box_score.away_team,box_score.away_score-proj_away))
     teams_and_differentials = sorted(teams_and_differentials,key=lambda x: x[1], reverse=True)
     return teams_and_differentials[0]  
 

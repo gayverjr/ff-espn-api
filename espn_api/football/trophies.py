@@ -70,6 +70,26 @@ def get_top_defense(box_scores,league):
     teams_and_scores = sorted(teams_and_scores,key=lambda x: x[1], reverse=True)
     return teams_and_scores[0]
 
+def get_team_lineup(team,box_scores):
+    for matchup in box_scores:
+        if matchup.home_team == team:
+            return matchup.home_lineup
+        elif matchup.away_team == team:
+            return matchup.away_lineup
+    return None
+
+def get_top_defense_season(league,week):
+    for team in league.teams:
+        for i in range(1,week+1):
+            team.total_defense=0
+            box_scores = league.box_scores(i)
+            lineup = get_team_lineup(team,box_scores)
+            for player in lineup:
+                if player.slot_position in ["DT","DE","LB","CB","S"]:
+                    team.total_defense+=player.points
+    team_list = sorted(league.teams,key=lambda x: x.total_defense, reverse=True)
+    return team_list[0],team_list[0].total_defense
+
 
 
 def get_LVP(box_scores,league):
@@ -211,7 +231,7 @@ def get_hue_jackson(box_scores,league,Zleague=False):
         teams_and_differentials.append((box_score.home_team,optimal_home-box_score.home_score))
         teams_and_differentials.append((box_score.away_team,optimal_away-box_score.away_score))
     teams_and_differentials = sorted(teams_and_differentials,key=lambda x: x[1], reverse=True)
-    return teams_and_differentials[:2]
+    return teams_and_differentials[0]
 
 def get_projected_score(lineup):
     ''' Optimal score for a given lineup
@@ -329,4 +349,40 @@ def get_biggest_L(box_scores):
         else:
             winner_loser_diff.append((box_score.away_team,box_score.home_team,box_score.away_score-box_score.home_score))
     winner_loser_diff = sorted(winner_loser_diff,key=lambda x: x[2], reverse=True)
-    return winner_loser_diff[0]  
+    return winner_loser_diff[0]
+
+
+def worst_coach(league,week,Z=False):
+    for team in league.teams:
+        team.lost_points = get_pts_lost(team,week,league,Z)
+    teams = sorted(league.teams,key=lambda x: x.lost_points, reverse=False)
+    return teams[0],teams[0].lost_points
+
+def best_coach(league,week,Z=False):
+    for team in league.teams:
+        team.gained_points = get_pts_gained(team,week,league,Z)
+    teams = sorted(league.teams,key=lambda x: x.gained_points, reverse=True)
+    return teams[0],teams[0].gained_points
+
+def get_pts_lost(team,week,league,Z=False):
+    points_lost = 0
+    for i in range(1,week+1):
+        box_scores = league.box_scores(i)
+        lineup = get_team_lineup(team,box_scores)
+        if Z:
+            points_lost += team.scores[i-1]-get_optimal_score_Z(lineup)
+        else:
+            points_lost += team.scores[i-1]-get_optimal_score(lineup)
+    return points_lost
+
+def get_pts_gained(team,week,league,Z=False):
+    points_gained = 0
+    for i in range(1,week+1):
+        box_scores = league.box_scores(i)
+        lineup = get_team_lineup(team,box_scores)
+        if Z:
+            points_gained += team.scores[i-1]-get_projected_score_Z(lineup)
+        else:
+            points_gained += team.scores[i-1]-get_projected_score(lineup)
+    return points_gained
+

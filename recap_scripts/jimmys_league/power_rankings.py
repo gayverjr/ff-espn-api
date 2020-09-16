@@ -20,7 +20,7 @@ rankings = power_rankings(league,week)
 print("Rank\tTeam\tW/L\tPoints\tOverall\tBench\tPWR")
 for i in range(0,len(rankings)):
     team = rankings[i]
-    print("[b]" + str(i+1)+ "[/b]: "+ team.team_name +str("(")+ str(team.wins) + "-" + str(team.losses) + str(")"))
+    print("[b]" + str(i+1)+ ":[/b] "+ team.team_name +str("(")+ str(team.wins) + "-" + str(team.losses) + str(")"))
     print("Points:" + '{0:.4g}'.format(np.sum(team.scores[:week])) + "(" + str(team.pts_rank)+ ")"+ " OVR:" +
           str(team.ovw)+ "-" + str(team.ovl) + "(" + str(team.ovr_rank) + ")" + " Bench:" + '{0:.4g}'.format(team.bench_points) + "(" + str(team.bnch_rank) + ")" + " PWR:" + '{0:.2g}'.format(team.power_score) )
 

@@ -18,7 +18,6 @@ week = 1
 
 print("[u] Weekly trophies [/u]")
 print()
-print("MVP:"+str(get_MVP(league.box_scores(week),league)))
 print("[b] MVP [/b]")
 player,pts,team = get_MVP(league.box_scores(week),league)
 print(str(player)+ "("+str(team)+"): " + '{0:.3g}'.format(pts) + " points")

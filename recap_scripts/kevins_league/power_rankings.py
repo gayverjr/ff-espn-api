@@ -15,6 +15,7 @@ week = 2
 
 
 rankings = power_rankings(league,week)
+print("[u] Power Rankings [/u]")
 print("Rank\tTeam\tW/L\tPoints\tOverall\tBench\tPWR")
 for i in range(0,len(rankings)):
     team = rankings[i]

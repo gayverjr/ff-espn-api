@@ -11,7 +11,7 @@ THE_LEAGUE_espn_s2 = "AEBrtMduGrOeFF0Yai%2Bh2gIu9%2FTDbj9xCuxORMm6IrSe%2FBjFvTaW
 THE_LEAGUE_ID = 893209
 year = 2020
 league = League(THE_LEAGUE_ID,year,THE_LEAGUE_espn_s2,THE_LEAGUE_SWID)
-week = 1
+week = 2
 
 
 rankings = power_rankings(league,week)

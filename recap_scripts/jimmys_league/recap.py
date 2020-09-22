@@ -4,8 +4,8 @@ from espn_api.football.power_rankings import *
 from scipy import stats
 import numpy as np
 
-best_player_line = "best player"
-worst_player_line = "worst player"
+best_player_line = "Savage in the box (score)"
+worst_player_line = "Ass is in the jackpot"
 
 Z_league = True
 Z_LEAGUE_ID = 1185741
@@ -14,7 +14,7 @@ Z_LEAGUE_espn_s2 = "AEBrtMduGrOeFF0Yai%2Bh2gIu9%2FTDbj9xCuxORMm6IrSe%2FBjFvTaWjg
 
 year = 2020
 league = League(Z_LEAGUE_ID,year,Z_LEAGUE_espn_s2,Z_LEAGUE_SWID)
-week = 1
+week = 2
 
 print("[u] Weekly trophies [/u]")
 print()
@@ -24,16 +24,16 @@ print(str(player)+ "("+str(team)+"): " + '{0:.3g}'.format(pts) + " points")
 print("[b] LVP [/b]")
 player,pts,team = get_LVP(league.box_scores(week),league)
 print(str(player)+ "("+str(team)+"): " + '{0:.3g}'.format(-1*pts) + " points below projection")
-print("[b] Benchwarmer [/b]")
+print("[b] Put me in coach! [/b]")
 player,team = get_bwotw(league.box_scores(week),league)
-print(str(player.name)+ "("+str(team)+"): " + '{0:.3g}'.format(player.points) + " points")
+print(str(player.name)+ "("+str(team)+"): " + '{0:.3g}'.format(player.points) + " points on the bench")
 print("[b] Defensive Player of the week [/b]")
 player,pts,team = get_DPOTW(league.box_scores(week),league)
 print(str(player)+ "("+str(team)+"): " + '{0:.3g}'.format(pts) + " points")
 print("[b] Adam Gase [/b]")
 team,points=get_hue_jackson(league.box_scores(week),league,Zleague=Z_league)
 print(team.team_name + ": " + '{0:.3g}'.format(points) + " points left on the bench.")
-print("[b] Hoodie [/b]")
+print("[b] THe Hoodie [/b]")
 team,points=get_sith_lord(league.box_scores(week),league,Zleague=Z_league)
 print(team.team_name + ": " + '{0:.3g}'.format(points) + " points better than ESPN suggested lineup.")
 print("[b] Top defense [/b]")
@@ -55,7 +55,7 @@ team,dpts = get_top_defense_season(league,week)
 print(team.team_name + " leads the league with " '{0:.3g}'.format(dpts) + " points scored by defensive players.")
 print("[b] Best Gameday Coach [/b]")
 team,pts = best_coach(league,week,Z=True)
-print(team.team_name + " has picked up " + '{0:.3g}'.format(pts) + " points with wise lineup decisions on the year.")
+print(team.team_name + " has outplayed ESPN by " + '{0:.3g}'.format(pts) + " points on the year.")
 print("[b] Should fire himself [/b]")
 team,pts = worst_coach(league,week,Z=True)
 print(team.team_name + " has left " + '{0:.3g}'.format(-1*pts) + " points on the bench on the year.")

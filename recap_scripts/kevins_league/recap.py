@@ -4,8 +4,8 @@ from espn_api.football.power_rankings import *
 from scipy import stats
 import numpy as np
 
-best_player_line = "best player"
-worst_player_line = "worst player"
+best_player_line = "The Great Bambino"
+worst_player_line = "Chris Davis"
 
 ##for the league
 THE_LEAGUE_SWID = "{AC702CB3-C59E-4EAD-A273-47C8EFA3B5E8}"
@@ -14,7 +14,7 @@ THE_LEAGUE_ID = 893209
 year = 2020
 Z_league=False
 league = League(THE_LEAGUE_ID,year,THE_LEAGUE_espn_s2,THE_LEAGUE_SWID)
-week = 1
+week = 2
 
 print("[u] Weekly trophies [/u]")
 print()
@@ -24,13 +24,13 @@ print(str(player)+ "("+str(team)+"): " + '{0:.3g}'.format(pts) + " points")
 print("[b] LVP [/b]")
 player,pts,team = get_LVP(league.box_scores(week),league)
 print(str(player)+ "("+str(team)+"): " + '{0:.3g}'.format(-1*pts) + " points below projection")
-print("[b] Benchwarmer [/b]")
+print("[b] Put me in coach! [/b]")
 player,team = get_bwotw(league.box_scores(week),league)
-print(str(player.name)+ "("+str(team)+"): " + '{0:.3g}'.format(player.points) + " points")
+print(str(player.name)+ "("+str(team)+"): " + '{0:.3g}'.format(player.points) + " points on the bench")
 print("[b] Adam Gase [/b]")
 team,points=get_hue_jackson(league.box_scores(week),league,Zleague=Z_league)
 print(team.team_name + ": " + '{0:.3g}'.format(points) + " points left on the bench.")
-print("[b] Hoodie [/b]")
+print("[b] The Hoodie [/b]")
 team,points=get_sith_lord(league.box_scores(week),league,Zleague=Z_league)
 print(team.team_name + ": " + '{0:.3g}'.format(points) + " points better than ESPN suggested lineup.")
 print("[b] Biggest L [/b]")
@@ -47,7 +47,7 @@ print("[u] Season long trophies [/u]")
 print()
 print("[b] Best Gameday Coach [/b]")
 team,pts = best_coach(league,week,Z=False)
-print(team.team_name + " has picked up " + '{0:.3g}'.format(pts) + " points with wise lineup decisions on the year.")
+print(team.team_name + " has outplayed ESPN by " + '{0:.3g}'.format(pts) + " points on the year.")
 print("[b] Should fire himself [/b]")
 team,pts = worst_coach(league,week,Z=False)
 print(team.team_name + " has left " + '{0:.3g}'.format(-1*pts) + " points on the bench on the year.")

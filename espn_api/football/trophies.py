@@ -80,8 +80,8 @@ def get_team_lineup(team,box_scores):
 
 def get_top_defense_season(league,week):
     for team in league.teams:
+        team.total_defense=0
         for i in range(1,week+1):
-            team.total_defense=0
             box_scores = league.box_scores(i)
             lineup = get_team_lineup(team,box_scores)
             for player in lineup:
